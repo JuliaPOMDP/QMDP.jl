@@ -13,6 +13,6 @@ Pkg.clone("https://github.com/sisl/ZMDP.jl")
 ```julia
 using QMDP
 pomdp = MyPOMDP() # initialize POMDP
-solver = QMDP()
-
+solver = QMDPSolver(max_iterations=100, tolerance=1e-3, gamma=0.99)
+alphas = solve(solver, pomdp)
 ```

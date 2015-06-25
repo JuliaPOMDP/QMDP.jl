@@ -11,7 +11,7 @@ export
     solve
 
 
-type QMDP <: SerialSolver
+type QMDPSolver <: Solver
     # Functions required:
     # n_states, n_actions
     # states, actions!
@@ -87,7 +87,7 @@ function solve(solver::QMDP, pomdp::POMDP; verbose::Bool=false)
 end
 
 
-type SampleQMDP <: SerialSolver
+type SampleQMDPSolver <: Solver
     # Functions required:
     # n_states, n_actions
     # states, actions!
