@@ -1,9 +1,7 @@
 module QMDPs
 
-
 using POMDPs
 using GridInterpolations
-# use Iterators to create our own?
 
 import POMDPs: SerialSolver, solve
 
@@ -87,9 +85,6 @@ function solve(solver::QMDP, pomdp::POMDP; verbose::Bool=false)
     end # main
     return alphas
 end
-
-
-
 
 
 type SampleQMDP <: SerialSolver
