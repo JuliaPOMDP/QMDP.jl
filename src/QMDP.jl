@@ -20,13 +20,13 @@ type QMDPSolver <: Solver
     # weight, index
     max_iterations::Int64
     tolerance::Float64
-    gamma::Float64
+    discount_factor::Float64
 end
 
 
-function QMDP(;max_iterations::Int64=100, tolerance::Float64=1e-3, gamma=0.99)
+function QMDP(;max_iterations::Int64=100, tolerance::Float64=1e-3, discount_factor=0.99)
     
-    return QMDP(max_iterations, tolerance, gamma)
+    return QMDP(max_iterations, tolerance, discount_factor)
 end
 
 function solve(solver::QMDP, pomdp::POMDP; verbose::Bool=false)
@@ -39,7 +39,7 @@ function solve(solver::QMDP, pomdp::POMDP; verbose::Bool=false)
 
     # solver parameters
     max_iterations = solver.max_iterations
-    gamma = solver.gamma
+    discount_factor = solver.discount_factor
     tolerance = solver.tolerance
 
     # intialize the alpha-vectors
@@ -59,7 +59,7 @@ function solve(solver::QMDP, pomdp::POMDP; verbose::Bool=false)
             actions!(action_iter, pomdp, s) 
             max_alpha = -Inf
             # action loop
-            # alpha(s) = R(s,a) + gamma * sum(T(s'|s,a)max(alpha(s'))
+            # alpha(s) = R(s,a) + discount_factor * sum(T(s'|s,a)max(alpha(s'))
             for (iaction, a) in enumerate(action_iter)
                 transition!(dist, pomdp, s, a) # fills distribution over neighbors
                 interpolants!(interps, dist) # fills weights and their indices
@@ -71,7 +71,7 @@ function solve(solver::QMDP, pomdp::POMDP; verbose::Bool=false)
                     #q = maximum(alphas[s_idx,:])
                     q_new += (p*q)
                 end
-                new_alpha = reward(pomdp, s, a) + gamma * q_new
+                new_alpha = reward(pomdp, s, a) + discount_factor * q_new
                 alphas[istate, iaction] = new_alpha 
                 new_alpha > max_alpha ? (max_alpha = new_alpha) : nothing
             end # actiom
@@ -98,13 +98,13 @@ type SampleQMDPSolver <: Solver
     max_iterations::Int64
     tolerance::Float64
     n_samples::Int64
-    gamma::Float64
+    discount_factor::Float64
     cuts::Array{Array{Float64}}
 end
 
-function SampleQMDP(cuts::Array{Array{Float64}};max_iterations::Int64=1000, tolerance::Float64=1e-3, n_samples::Int64=1, gamma::Float64=0.99)
+function SampleQMDP(cuts::Array{Array{Float64}};max_iterations::Int64=1000, tolerance::Float64=1e-3, n_samples::Int64=1, discount_factor::Float64=0.99)
     
-    return SampleQMDP(max_iterations, tolerance, n_samples, gamma, cuts)
+    return SampleQMDP(max_iterations, tolerance, n_samples, discount_factor, cuts)
 end
 
 function solve(solver::SampleQMDP, pomdp::POMDP; verbose::Bool=false)
@@ -147,8 +147,8 @@ function solve(solver::SampleQMDP, pomdp::POMDP; verbose::Bool=false)
                     convert!(x, sample_state)
                     q += interpolate(grid, V, x)
                 end
-                # alpha[s,a] = R(s,a) + gamma * sum T(s'|s,a)*V(s')
-                alphas[istate, iaction] = reward(pomdp, s, a) + gamma * q
+                # alpha[s,a] = R(s,a) + discount_factor * sum T(s'|s,a)*V(s')
+                alphas[istate, iaction] = reward(pomdp, s, a) + discount_factor * q
             end
             # update the value array
             V[istate] = max(alphas[istate,:])
