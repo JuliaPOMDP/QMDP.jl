@@ -3,7 +3,7 @@ module QMDP
 using POMDPs
 using GridInterpolations
 
-import POMDPs: SerialSolver, solve
+import POMDPs: Solver, solve
 
 export
     QMDPSolver,
@@ -24,12 +24,12 @@ type QMDPSolver <: Solver
 end
 
 
-function QMDP(;max_iterations::Int64=100, tolerance::Float64=1e-3, discount_factor=0.99)
+function QMDPSolver(;max_iterations::Int64=100, tolerance::Float64=1e-3, discount_factor=0.99)
     
-    return QMDP(max_iterations, tolerance, discount_factor)
+    return QMDPSolver(max_iterations, tolerance, discount_factor)
 end
 
-function solve(solver::QMDP, pomdp::POMDP; verbose::Bool=false)
+function solve(solver::QMDPSolver, pomdp::POMDP; verbose::Bool=false)
     
     # state and action space info
     n_s = n_states(pomdp)
@@ -102,12 +102,12 @@ type SampleQMDPSolver <: Solver
     cuts::Array{Array{Float64}}
 end
 
-function SampleQMDP(cuts::Array{Array{Float64}};max_iterations::Int64=1000, tolerance::Float64=1e-3, n_samples::Int64=1, discount_factor::Float64=0.99)
+function SampleQMDPSolver(cuts::Array{Array{Float64}};max_iterations::Int64=1000, tolerance::Float64=1e-3, n_samples::Int64=1, discount_factor::Float64=0.99)
     
-    return SampleQMDP(max_iterations, tolerance, n_samples, discount_factor, cuts)
+    return SampleQMDPSolver(max_iterations, tolerance, n_samples, discount_factor, cuts)
 end
 
-function solve(solver::SampleQMDP, pomdp::POMDP; verbose::Bool=false)
+function solve(solver::SampleQMDPSolver, pomdp::POMDP; verbose::Bool=false)
     
     # state and action space info
     n_s = n_states(pomdp)
