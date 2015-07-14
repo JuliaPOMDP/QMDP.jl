@@ -90,7 +90,7 @@ function transition!(d::TransitionDistribution, pomdp::BabyPOMDP, s::BabyState, 
     elseif a.feed 
         d.ishungry = Bernoulli(0.0)
     else
-        d.ishungry = Bernoulli(0.2)
+        d.ishungry = Bernoulli(0.1)
     end
     d
 end

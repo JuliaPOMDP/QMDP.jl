@@ -13,7 +13,7 @@ using POMDPs
 using Distributions
 using Discretizers
 using POMDPToolbox
-using QMDPs
+using QMDP
 
 import POMDPs.states
 import POMDPs.actions!
@@ -190,6 +190,6 @@ end
 
 pomdp = MyPOMDP(0.5,0.5,-1.0,-1.0,-100.0,0.1)
 
-solver = QMDP(max_iterations=1)
+#solver = QMDP(max_iterations=1)
 
-alphas = solve(solver, pomdp)
+#alphas = solve(solver, pomdp)
