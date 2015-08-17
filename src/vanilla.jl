@@ -111,4 +111,19 @@ function action(policy::QMDPPolicy, b::Belief)
     return policy.action_map[ihi]
 end
 
-
+function value(policy::QMDPPolicy, b::Belief)
+    alphas = policy.alphas
+    vhi = -Inf
+    (ns, na) = size(alphas)
+    @assert length(b) == ns "Length of belief and alpha-vector size mismatch"
+    for ai = 1:na
+        util = 0.0
+        for si = 1:length(b)
+            util += weight(b,si) * alphas[si,ai]
+        end
+        if util > vhi
+            vhi = util
+        end
+    end
+    return vhi
+end

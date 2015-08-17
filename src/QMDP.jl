@@ -1,14 +1,15 @@
 module QMDP
 
 using POMDPs
-using GridInterpolations
 
 import POMDPs: Solver, solve!, Policy, action, value
 
 export
     QMDPSolver,
     QMDPPolicy,
-    solve!
+    solve!,
+    action,
+    value
 
 typealias Action Any
 
