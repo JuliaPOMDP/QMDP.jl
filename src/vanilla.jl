@@ -21,7 +21,7 @@ type QMDPPolicy <: Policy
         na = n_actions(pomdp)
         self = new()
         if !isempty(alphas)
-            @assert size(alphas,1) == ns && size(alphas,2) == na "Input alphas dimension mismatch"    
+            @assert size(alphas) == (ns,na) "Input alphas dimension mismatch"    
             self.alphas = alphas
         else
             self.alphas = zeros(ns, na)
