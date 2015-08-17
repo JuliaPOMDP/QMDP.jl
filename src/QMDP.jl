@@ -7,7 +7,6 @@ import POMDPs: Solver, solve!, Policy, action, value
 
 export
     QMDPSolver,
-    SampleQMDPSolver,
     QMDPPolicy,
     solve!
 
