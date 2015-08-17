@@ -54,8 +54,12 @@ function solve!(policy::QMDPPolicy, solver::QMDPSolver, pomdp::POMDP; verbose::B
     sspace = states(pomdp)
     aspace = actions(pomdp)
 
+    total_time = 0.0
+    iter_time = 0.0
+
     # main loop
     for i = 1:max_iterations
+        tic()
         residual = 0.0
         # state loop
         for (istate, s) in enumerate(domain(sspace))
@@ -80,7 +84,9 @@ function solve!(policy::QMDPPolicy, solver::QMDPSolver, pomdp::POMDP; verbose::B
             diff = abs(max_alpha - old_alpha)
             diff > residual ? (residual = diff) : nothing
         end # state
-        verbose ? println("Iteration : $i, residual: $residual") : nothing
+        iter_time = toq()
+        total_time += iter_time
+        verbose ? println("Iteration : $i, residual: $residual, iteration run-time: $iter_time, total run-time: $total_time") : nothing
         residual < tolerance ? break : nothing 
     end # main
     policy
@@ -90,12 +96,12 @@ function action(policy::QMDPPolicy, b::Belief)
     alphas = policy.alphas
     ihi = 0
     vhi = -Inf
-    (na, ns) = size(alphas)
+    (ns, na) = size(alphas)
     @assert length(b) == ns "Length of belief and alpha-vector size mismatch"
     for ai = 1:na
         util = 0.0
         for si = 1:length(b)
-            util += alphas[ai,si] * b[si]
+            util += weight(b,si) * alphas[si,ai]
         end
         if util > vhi
             vhi = util
@@ -104,3 +110,5 @@ function action(policy::QMDPPolicy, b::Belief)
     end
     return policy.action_map[ihi]
 end
+
+
