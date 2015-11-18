@@ -2,16 +2,15 @@ module QMDP
 
 using POMDPs
 
-import POMDPs: Solver, solve!, Policy, action, value
+import POMDPs: Solver, solve, create_policy, Policy, action, value
 
 export
     QMDPSolver,
     QMDPPolicy,
-    solve!,
+    solve,
     action,
-    value
-
-typealias Action Any
+    value,
+    create_policy
 
 include("vanilla.jl")
 

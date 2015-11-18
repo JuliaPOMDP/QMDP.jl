@@ -36,8 +36,12 @@ type QMDPPolicy <: Policy
     end
 end
 
+function create_policy(solver::QMDPSolver, pomdp::POMDP)
+    return QMDPPolicy(pomdp)
+end
 
-function solve!(policy::QMDPPolicy, solver::QMDPSolver, pomdp::POMDP; verbose::Bool=false)
+
+function solve(solver::QMDPSolver, pomdp::POMDP, policy::QMDPPolicy=create_policy(solver, pomdp); verbose::Bool=false)
 
     # solver parameters
     max_iterations = solver.max_iterations
@@ -64,17 +68,16 @@ function solve!(policy::QMDPPolicy, solver::QMDPSolver, pomdp::POMDP; verbose::B
         # state loop
         for (istate, s) in enumerate(domain(sspace))
             old_alpha = maximum(alphas[istate,:]) # for residual 
-            actions!(aspace, pomdp, s) 
+            aspace = actions(pomdp, s, aspace) 
             max_alpha = -Inf
             # action loop
             # alpha(s) = R(s,a) + discount_factor * sum(T(s'|s,a)max(alpha(s'))
             for (iaction, a) in enumerate(domain(aspace))
-                transition!(dist, pomdp, s, a) # fills distribution over neighbors
+                transition(pomdp, s, a, dist) # fills distribution over neighbors
                 q_new = 0.0
-                for j = 1:length(dist)
-                    p = weight(dist, j)
-                    sidx = index(dist, j)
-                    q_new += p * maximum(alphas[sidx,:])
+                for (jstate, sp) in enumerate(domain(sspace))
+                    p = pdf(dist, sp)
+                    q_new += p * maximum(alphas[jstate,:])
                 end
                 new_alpha = reward(pomdp, s, a) + discount_factor * q_new
                 alphas[istate, iaction] = new_alpha 
@@ -91,6 +94,8 @@ function solve!(policy::QMDPPolicy, solver::QMDPSolver, pomdp::POMDP; verbose::B
     end # main
     policy
 end
+
+alphas(policy::QMDPPolicy) = policy.alphas
 
 function action(policy::QMDPPolicy, b::Belief)
     alphas = policy.alphas

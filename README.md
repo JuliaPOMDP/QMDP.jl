@@ -13,9 +13,16 @@ Pkg.clone("https://github.com/sisl/QMDP.jl")
 ```julia
 using QMDP
 pomdp = MyPOMDP() # initialize POMDP
-policy = QMDPPolicy(pomdp) # initialize the QMDP policy
-solver = QMDPSolver(max_iterations=100, tolerance=1e-3)
-solve!(policy, solver, pomdp, verbose=true) # key worded verbose argument for status output to console
+
+# initialize the solver
+# key-word args are the maximum number of iterations the solver will run for, and the Bellman tolerance
+solver = QMDPSolver(max_iterations=20, tolerance=1e-3) 
+
+# initialize the QMDP policy
+policy = create_policy(solver, pomdp)
+
+# run the solver
+solve(solver, pomdp, policy, verbose=true)
 ```
 
 To compute optimal action define a Belief with accessor functions, or use the DiscreteBelief provided in [POMDPToolbox](https://github.com/sisl/POMDPToolbox.jl).
