@@ -28,7 +28,7 @@ type QMDPPolicy <: Policy
         end
         am = Action[]
         space = actions(pomdp)
-        for a in domain(space)
+        for a in iterator(space)
             push!(am, a)
         end
         self.action_map = am
@@ -66,21 +66,24 @@ function solve(solver::QMDPSolver, pomdp::POMDP, policy::QMDPPolicy=create_polic
         tic()
         residual = 0.0
         # state loop
-        for (istate, s) in enumerate(domain(sspace))
+        for (istate, s) in enumerate(iterator(sspace))
             old_alpha = maximum(alphas[istate,:]) # for residual 
             aspace = actions(pomdp, s, aspace) 
             max_alpha = -Inf
             # action loop
             # alpha(s) = R(s,a) + discount_factor * sum(T(s'|s,a)max(alpha(s'))
-            for (iaction, a) in enumerate(domain(aspace))
-                transition(pomdp, s, a, dist) # fills distribution over neighbors
+            for (iaction, a) in enumerate(iterator(aspace))
+                dist = transition(pomdp, s, a, dist) # fills distribution over neighbors
                 q_new = 0.0
-                for (jstate, sp) in enumerate(domain(sspace))
+                for sp in iterator(sspace)
                     p = pdf(dist, sp)
-                    q_new += p * maximum(alphas[jstate,:])
+                    p == 0.0 ? continue : nothing # skip if zero prob
+                    r = reward(pomdp, s, a, sp)
+                    sidx = index(pomdp, sp)
+                    q_new += p * (r + discount_factor * maximum(alphas[sidx,:]))
                 end
-                new_alpha = reward(pomdp, s, a) + discount_factor * q_new
-                alphas[istate, iaction] = new_alpha 
+                new_alpha = q_new
+                alphas[istate, iaction] = new_alpha
                 new_alpha > max_alpha ? (max_alpha = new_alpha) : nothing
             end # actiom
             # update the value array
