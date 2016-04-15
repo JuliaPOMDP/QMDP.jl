@@ -14,7 +14,7 @@ end
 
 type QMDPPolicy <: Policy
     alphas::Matrix{Float64}
-    action_map::Vector{Action}
+    action_map::Vector{Any}
     # constructor with an option to pass in generated alpha vectors
     function QMDPPolicy(pomdp::POMDP; alphas::Matrix{Float64}=Array(Float64,0,0))
         ns = n_states(pomdp)
@@ -26,7 +26,7 @@ type QMDPPolicy <: Policy
         else
             self.alphas = zeros(ns, na)
         end
-        am = Action[]
+        am = Any[]
         space = actions(pomdp)
         for a in iterator(space)
             push!(am, a)
@@ -79,7 +79,7 @@ function solve(solver::QMDPSolver, pomdp::POMDP, policy::QMDPPolicy=create_polic
                     p = pdf(dist, sp)
                     p == 0.0 ? continue : nothing # skip if zero prob
                     r = reward(pomdp, s, a, sp)
-                    sidx = index(pomdp, sp)
+                    sidx = state_index(pomdp, sp)
                     q_new += p * (r + discount_factor * maximum(alphas[sidx,:]))
                 end
                 new_alpha = q_new
