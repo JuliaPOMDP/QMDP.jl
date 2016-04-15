@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/JuliaPOMDP/QMDP.jl.svg?branch=master)](https://travis-ci.org/JuliaPOMDP/DiscreteValueIteration.jl)
+[![Coverage Status](https://coveralls.io/repos/JuliaPOMDP/QMDP.jl/badge.svg)](https://coveralls.io/r/JuliaPOMDP/DiscreteValueIteration.jl)
 # QMDP
 
 This Julia package implements the QMDP approximate solver for POMDP/MDP planning.
