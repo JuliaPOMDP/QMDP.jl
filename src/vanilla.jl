@@ -15,6 +15,7 @@ end
 type QMDPPolicy <: Policy
     alphas::Matrix{Float64}
     action_map::Vector{Any}
+    pomdp::POMDP
     # constructor with an option to pass in generated alpha vectors
     function QMDPPolicy(pomdp::POMDP; alphas::Matrix{Float64}=Array(Float64,0,0))
         ns = n_states(pomdp)
@@ -32,12 +33,38 @@ type QMDPPolicy <: Policy
             push!(am, a)
         end
         self.action_map = am
+        self.pomdp = pomdp
         return self
     end
 end
 
-function create_policy(solver::QMDPSolver, pomdp::POMDP)
-    return QMDPPolicy(pomdp)
+type QMDPBelief 
+    b::DiscreteBelief
+end
+
+
+type QMDPUpdater <: Updater{QMDPBelief}
+    du::DiscreteUpdater
+end
+
+create_policy(solver::QMDPSolver, pomdp::POMDP) = QMDPPolicy(pomdp)
+
+create_belief(bu::QMDPUpdater) = QMDPBelief(DiscreteBelief(n_states(bu.du.pomdp)))
+
+updater(p::QMDPPolicy) = QMDPUpdater(DiscreteUpdater(p.pomdp))
+
+function initialize_belief(bu::QMDPUpdater, initial_state_dist::AbstractDistribution, new_belief::QMDPBelief=create_belief(bu))
+    pomdp = bu.du.pomdp
+    si = 1
+    for s in iterator(states(pomdp))
+        new_belief.b[si] = pdf(initial_state_dist, s)
+        si += 1
+    end
+    return new_belief
+end
+
+function update{A,O}(bu::QMDPUpdater, belief_old::QMDPBelief, action::A, obs::O, belief_new::QMDPBelief=create_belief(bu))
+    update(bu.du, belief_old.b, action, obs, belief_new.b)
 end
 
 
@@ -100,16 +127,16 @@ end
 
 alphas(policy::QMDPPolicy) = policy.alphas
 
-function action(policy::QMDPPolicy, b::Belief)
+function action(policy::QMDPPolicy, b::QMDPBelief)
     alphas = policy.alphas
     ihi = 0
     vhi = -Inf
     (ns, na) = size(alphas)
-    @assert length(b) == ns "Length of belief and alpha-vector size mismatch"
+    @assert length(b.b) == ns "Length of belief and alpha-vector size mismatch"
     for ai = 1:na
         util = 0.0
-        for si = 1:length(b)
-            util += weight(b,si) * alphas[si,ai]
+        for si = 1:length(b.b)
+            util += b.b[si] * alphas[si,ai]
         end
         if util > vhi
             vhi = util
@@ -119,15 +146,15 @@ function action(policy::QMDPPolicy, b::Belief)
     return policy.action_map[ihi]
 end
 
-function value(policy::QMDPPolicy, b::Belief)
+function value(policy::QMDPPolicy, b::QMDPBelief)
     alphas = policy.alphas
     vhi = -Inf
     (ns, na) = size(alphas)
-    @assert length(b) == ns "Length of belief and alpha-vector size mismatch"
+    @assert length(b.b) == ns "Length of belief and alpha-vector size mismatch"
     for ai = 1:na
         util = 0.0
-        for si = 1:length(b)
-            util += weight(b,si) * alphas[si,ai]
+        for si = 1:length(b.b)
+            util += b.b[si] * alphas[si,ai]
         end
         if util > vhi
             vhi = util
