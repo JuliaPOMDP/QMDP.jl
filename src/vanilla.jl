@@ -95,7 +95,6 @@ function solve(solver::QMDPSolver, pomdp::POMDP, policy::QMDPPolicy=create_polic
         # state loop
         for (istate, s) in enumerate(iterator(sspace))
             old_alpha = maximum(alphas[istate,:]) # for residual 
-            aspace = actions(pomdp, s, aspace) 
             max_alpha = -Inf
             # action loop
             # alpha(s) = R(s,a) + discount_factor * sum(T(s'|s,a)max(alpha(s'))
