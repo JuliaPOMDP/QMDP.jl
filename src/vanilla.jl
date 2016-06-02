@@ -42,7 +42,6 @@ type QMDPBelief
     b::DiscreteBelief
 end
 
-
 type QMDPUpdater <: Updater{QMDPBelief}
     du::DiscreteUpdater
 end
@@ -64,7 +63,7 @@ function initialize_belief(bu::QMDPUpdater, initial_state_dist::AbstractDistribu
 end
 
 function update{A,O}(bu::QMDPUpdater, belief_old::QMDPBelief, action::A, obs::O, belief_new::QMDPBelief=create_belief(bu))
-    update(bu.du, belief_old.b, action, obs, belief_new.b)
+    QMDPBelief(update(bu.du, belief_old.b, action, obs, belief_new.b))
 end
 
 
