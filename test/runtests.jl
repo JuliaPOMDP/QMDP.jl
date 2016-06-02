@@ -1,6 +1,7 @@
 using QMDP
 using POMDPModels
 using GenerativeModels
+using POMDPToolbox
 using Base.Test
 
 pomdp = TigerPOMDP()
@@ -21,4 +22,4 @@ sp, o = generate_so(pomdp, s, a, rng)
 bp = update(bu, b, a, o)
 @test isa(bp, QMDP.QMDPBelief)
 
-
+test_solver(solver, BabyPOMDP())
