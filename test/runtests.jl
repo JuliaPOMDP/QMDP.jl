@@ -20,6 +20,8 @@ v = value(policy, b)
 s = initial_state(pomdp, rng)
 sp, o = generate_so(pomdp, s, a, rng)
 bp = update(bu, b, a, o)
-@test isa(bp, QMDP.QMDPBelief)
+@test isa(bp, DiscreteBelief)
 
-test_solver(solver, BabyPOMDP())
+r = test_solver(solver, pomdp)
+
+@test_approx_eq_eps r 17.711 1e-2

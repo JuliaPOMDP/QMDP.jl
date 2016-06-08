@@ -1,10 +1,22 @@
+############################################################
+###################### QMDP Solver #########################
+############################################################
+
+#=
+POMDP Model Requirements:
+    create_transition_distribution(pomdp) 
+    states(pomdp) 
+    actions(pomdp) 
+    iterator(space) 
+    transition(pomdp, s, a, dist) 
+    reward(pomdp, s, a, sp) 
+    pdf(dist, sp) 
+    state_index(pomdp, sp) 
+
+    The user must implement the above functions to use QMDP.
+=#
+
 type QMDPSolver <: Solver
-    # Functions required:
-    # n_states, n_actions
-    # states, actions!
-    # create_action, create_transtion, create_interpolants
-    # transition!, intrpolants!
-    # weight, index
     max_iterations::Int64
     tolerance::Float64
 end
@@ -38,34 +50,9 @@ type QMDPPolicy <: Policy
     end
 end
 
-type QMDPBelief 
-    b::DiscreteBelief
-end
-
-type QMDPUpdater <: Updater{QMDPBelief}
-    du::DiscreteUpdater
-end
-
 create_policy(solver::QMDPSolver, pomdp::POMDP) = QMDPPolicy(pomdp)
 
-create_belief(bu::QMDPUpdater) = QMDPBelief(DiscreteBelief(n_states(bu.du.pomdp)))
-
-updater(p::QMDPPolicy) = QMDPUpdater(DiscreteUpdater(p.pomdp))
-
-function initialize_belief(bu::QMDPUpdater, initial_state_dist::AbstractDistribution, new_belief::QMDPBelief=create_belief(bu))
-    pomdp = bu.du.pomdp
-    si = 1
-    for s in iterator(states(pomdp))
-        new_belief.b[si] = pdf(initial_state_dist, s)
-        si += 1
-    end
-    return new_belief
-end
-
-function update{A,O}(bu::QMDPUpdater, belief_old::QMDPBelief, action::A, obs::O, belief_new::QMDPBelief=create_belief(bu))
-    QMDPBelief(update(bu.du, belief_old.b, action, obs, belief_new.b))
-end
-
+updater(p::QMDPPolicy) = DiscreteUpdater(p.pomdp)
 
 function solve(solver::QMDPSolver, pomdp::POMDP, policy::QMDPPolicy=create_policy(solver, pomdp); verbose::Bool=false)
 
@@ -125,17 +112,14 @@ end
 
 alphas(policy::QMDPPolicy) = policy.alphas
 
-function action(policy::QMDPPolicy, b::QMDPBelief)
+function action(policy::QMDPPolicy, b::DiscreteBelief)
     alphas = policy.alphas
     ihi = 0
     vhi = -Inf
     (ns, na) = size(alphas)
     @assert length(b.b) == ns "Length of belief and alpha-vector size mismatch"
     for ai = 1:na
-        util = 0.0
-        for si = 1:length(b.b)
-            util += b.b[si] * alphas[si,ai]
-        end
+        util = dot(alphas[:,ai], b.b)
         if util > vhi
             vhi = util
             ihi = ai
@@ -144,7 +128,7 @@ function action(policy::QMDPPolicy, b::QMDPBelief)
     return policy.action_map[ihi]
 end
 
-function value(policy::QMDPPolicy, b::QMDPBelief)
+function value(policy::QMDPPolicy, b::DiscreteBelief)
     alphas = policy.alphas
     vhi = -Inf
     (ns, na) = size(alphas)
