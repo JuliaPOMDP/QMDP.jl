@@ -20,5 +20,6 @@ export
     create_belief
 
 include("vanilla.jl")
+include("required.jl")
 
 end # module
