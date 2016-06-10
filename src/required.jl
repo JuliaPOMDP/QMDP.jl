@@ -8,5 +8,5 @@ const REQUIRED_FUNCTIONS = [states,
                             state_index]
 
 function required()
-    POMDPs.print_requirements(REQUIRED_FUNCTIONS)
+    POMDPs.get_methods(REQUIRED_FUNCTIONS)
 end
