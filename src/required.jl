@@ -7,6 +7,6 @@ const REQUIRED_FUNCTIONS = [states,
                             pdf,
                             state_index]
 
-function required()
+function required_methods()
     POMDPs.get_methods(REQUIRED_FUNCTIONS)
 end
