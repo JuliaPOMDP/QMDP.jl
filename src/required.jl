@@ -5,6 +5,7 @@ const REQUIRED_FUNCTIONS = [states,
                             transition,
                             reward,
                             pdf,
+                            discount,
                             state_index]
 
 function required_methods()

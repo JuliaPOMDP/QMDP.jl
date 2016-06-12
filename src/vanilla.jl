@@ -11,6 +11,7 @@ POMDP Model Requirements:
     transition(pomdp, s, a, dist) 
     reward(pomdp, s, a, sp) 
     pdf(dist, sp) 
+    discount(pomdp)
     state_index(pomdp, sp) 
 
     The user must implement the above functions to use QMDP.
