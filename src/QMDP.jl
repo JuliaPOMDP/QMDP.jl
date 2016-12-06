@@ -2,6 +2,7 @@ module QMDP
 
 using POMDPs
 using POMDPToolbox
+using DiscreteValueIteration
 
 import POMDPs: Solver, Policy
 import POMDPs: create_policy, solve, action, value, update, initialize_belief, updater, create_belief, create_policy

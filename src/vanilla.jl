@@ -40,12 +40,7 @@ type QMDPPolicy <: Policy
         else
             self.alphas = zeros(ns, na)
         end
-        am = Any[]
-        space = actions(pomdp)
-        for a in iterator(space)
-            push!(am, a)
-        end
-        self.action_map = am
+        self.action_map = ordered_actions(pomdp)
         self.pomdp = pomdp
         return self
     end
@@ -56,59 +51,12 @@ create_policy(solver::QMDPSolver, pomdp::POMDP) = QMDPPolicy(pomdp)
 updater(p::QMDPPolicy) = DiscreteUpdater(p.pomdp)
 
 function solve(solver::QMDPSolver, pomdp::POMDP, policy::QMDPPolicy=create_policy(solver, pomdp); verbose::Bool=false)
+    vi_solver = ValueIterationSolver(solver.max_iterations, solver.tolerance)
+    vi_policy = ValueIterationPolicy(pomdp, include_Q=true)
+    vi_policy = solve(vi_solver, pomdp, vi_policy, verbose=verbose)
 
-    # solver parameters
-    max_iterations = solver.max_iterations
-    tolerance = solver.tolerance
-    discount_factor = discount(pomdp)
-
-    # intialize the alpha-vectors
-    alphas = policy.alphas
-
-    # pre-allocate the transtion distirbution and the interpolants
-    dist = create_transition_distribution(pomdp)
-
-    # initalize space
-    sspace = states(pomdp)
-    aspace = actions(pomdp)
-
-    total_time = 0.0
-    iter_time = 0.0
-
-    # main loop
-    for i = 1:max_iterations
-        tic()
-        residual = 0.0
-        # state loop
-        for (istate, s) in enumerate(iterator(sspace))
-            old_alpha = maximum(alphas[istate,:]) # for residual 
-            max_alpha = -Inf
-            # action loop
-            # alpha(s) = R(s,a) + discount_factor * sum(T(s'|s,a)max(alpha(s'))
-            for (iaction, a) in enumerate(iterator(aspace))
-                dist = transition(pomdp, s, a, dist) # fills distribution over neighbors
-                q_new = 0.0
-                for sp in iterator(sspace)
-                    p = pdf(dist, sp)
-                    p == 0.0 ? continue : nothing # skip if zero prob
-                    r = reward(pomdp, s, a, sp)
-                    sidx = state_index(pomdp, sp)
-                    q_new += p * (r + discount_factor * maximum(alphas[sidx,:]))
-                end
-                new_alpha = q_new
-                alphas[istate, iaction] = new_alpha
-                new_alpha > max_alpha ? (max_alpha = new_alpha) : nothing
-            end # actiom
-            # update the value array
-            diff = abs(max_alpha - old_alpha)
-            diff > residual ? (residual = diff) : nothing
-        end # state
-        iter_time = toq()
-        total_time += iter_time
-        verbose ? println("Iteration : $i, residual: $residual, iteration run-time: $iter_time, total run-time: $total_time") : nothing
-        residual < tolerance ? break : nothing 
-    end # main
-    policy
+    policy.alphas[:] = vi_policy.qmat
+    return policy
 end
 
 alphas(policy::QMDPPolicy) = policy.alphas

@@ -1,5 +1,8 @@
 using POMDPs
 
-POMDPs.add("POMDPModels", false)
 POMDPs.add("POMDPToolbox", false)
-POMDPs.add("GenerativeModels", false) # for testing
+POMDPs.add("DiscreteValueIteration", false)
+
+# for testing
+POMDPs.add("GenerativeModels", false)
+POMDPs.add("POMDPModels", false)
