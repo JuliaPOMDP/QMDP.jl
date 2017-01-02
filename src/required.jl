@@ -1,3 +1,5 @@
+# getting rid of for version_4
+#=
 const REQUIRED_FUNCTIONS = [states,
                             actions,
                             iterator,
@@ -11,3 +13,4 @@ const REQUIRED_FUNCTIONS = [states,
 function required_methods()
     POMDPs.get_methods(REQUIRED_FUNCTIONS)
 end
+=#

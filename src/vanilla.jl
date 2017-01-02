@@ -50,6 +50,11 @@ create_policy(solver::QMDPSolver, pomdp::POMDP) = QMDPPolicy(pomdp)
 
 updater(p::QMDPPolicy) = DiscreteUpdater(p.pomdp)
 
+@POMDP_require solve(solver::QMDPSolver, pomdp::POMDP) begin
+    vi_solver = ValueIterationSolver(solver.max_iterations, solver.tolerance)
+    @subreq solve(vi_solver, pomdp)
+end
+
 function solve(solver::QMDPSolver, pomdp::POMDP, policy::QMDPPolicy=create_policy(solver, pomdp); verbose::Bool=false)
     vi_solver = ValueIterationSolver(solver.max_iterations, solver.tolerance)
     vi_policy = ValueIterationPolicy(pomdp, include_Q=true)

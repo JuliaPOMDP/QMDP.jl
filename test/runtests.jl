@@ -1,4 +1,5 @@
 using QMDP
+using POMDPs
 using POMDPModels
 using GenerativeModels
 using POMDPToolbox
@@ -6,6 +7,9 @@ using Base.Test
 
 pomdp = TigerPOMDP()
 solver = QMDPSolver()
+
+@requirements_info solver pomdp
+
 policy = solve(solver, pomdp, verbose=true)
 rng = MersenneTwister(11)
 
