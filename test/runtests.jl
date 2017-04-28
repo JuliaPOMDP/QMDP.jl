@@ -1,7 +1,6 @@
 using QMDP
 using POMDPs
 using POMDPModels
-using GenerativeModels
 using POMDPToolbox
 using Base.Test
 
