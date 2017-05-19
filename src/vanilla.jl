@@ -25,25 +25,23 @@ function QMDPSolver(;max_iterations::Int64=100, tolerance::Float64=1e-3)
     return QMDPSolver(max_iterations, tolerance)
 end
 
-type QMDPPolicy <: Policy
+type QMDPPolicy{P<:POMDP, A} <: Policy
     alphas::Matrix{Float64}
-    action_map::Vector{Any}
-    pomdp::POMDP
-    # constructor with an option to pass in generated alpha vectors
-    function QMDPPolicy(pomdp::POMDP; alphas::Matrix{Float64}=Array(Float64,0,0))
-        ns = n_states(pomdp)
-        na = n_actions(pomdp)
-        self = new()
-        if !isempty(alphas)
-            @assert size(alphas) == (ns,na) "Input alphas dimension mismatch"    
-            self.alphas = alphas
-        else
-            self.alphas = zeros(ns, na)
-        end
-        self.action_map = ordered_actions(pomdp)
-        self.pomdp = pomdp
-        return self
+    action_map::Vector{A}
+    pomdp::P
+end
+
+# constructor with an option to pass in generated alpha vectors
+function QMDPPolicy(pomdp::POMDP; alphas::Matrix{Float64}=Array(Float64,0,0))
+    ns = n_states(pomdp)
+    na = n_actions(pomdp)
+    if !isempty(alphas)
+        @assert size(alphas) == (ns,na) "Input alphas dimension mismatch"    
+    else
+        alphas = zeros(ns, na)
     end
+    action_map = ordered_actions(pomdp)
+    return QMDPPolicy(alphas, action_map, pomdp)
 end
 
 create_policy(solver::QMDPSolver, pomdp::POMDP) = QMDPPolicy(pomdp)
@@ -80,6 +78,14 @@ function action(policy::QMDPPolicy, b::DiscreteBelief)
         end
     end
     return policy.action_map[ihi]
+end
+
+function action(policy::QMDPPolicy, b)
+    bv = Array(Float64, n_states(policy.pomdp))
+    for (i,s) in enumerate(ordered_states(policy.pomdp))
+        bv[i] = pdf(b, s)
+    end
+    return action(policy, DiscreteBelief(bv))
 end
 
 function value(policy::QMDPPolicy, b::DiscreteBelief)
