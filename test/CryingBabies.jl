@@ -22,7 +22,7 @@ import POMDPs: create_interpolants, interpolants!, weight, index
 import POMDPs: dimensions
 
 #=
-export 
+export
     BabyPOMDP,
     BabyState,
     BabyAction,
@@ -45,30 +45,30 @@ export
     interpolants!
 =#
 
-type BabyPOMDP <: POMDP
+mutable struct BabyPOMDP <: POMDP
     r_feed::Float64
     r_hungry::Float64
 end
 
-type BabyState
+mutable struct BabyState
     hungry::Bool
 end
 
-type BabyObservation 
+mutable struct BabyObservation
     crying::Bool
 end
 
-type BabyAction
+mutable struct BabyAction
     feed::Bool
 end
 
-type TransitionDistribution <: AbstractDistribution
+mutable struct TransitionDistribution <: AbstractDistribution
     ishungry::Bernoulli
 
     TransitionDistribution() = new(Bernoulli(0.2))
 end
 
-type ObservationDistribution <: AbstractDistribution
+mutable struct ObservationDistribution <: AbstractDistribution
     iscrying::Bernoulli
 
     ObservationDistribution() = new(Bernoulli(0.1))
@@ -87,7 +87,7 @@ n_observations(::BabyPOMDP) = 2
 function transition!(d::TransitionDistribution, pomdp::BabyPOMDP, s::BabyState, a::BabyAction)
     if !a.feed && s.hungry
         d.ishungry = Bernoulli(1.0)
-    elseif a.feed 
+    elseif a.feed
         d.ishungry = Bernoulli(0.0)
     else
         d.ishungry = Bernoulli(0.1)
@@ -136,7 +136,7 @@ end
 const ACTION_SET = [BabyAction(i) for i = 0:1]
 
 function actions!(acts::Vector{BabyAction}, ::BabyPOMDP, s::BabyState)
-    acts[1:end] = ACTION_SET[1:end] 
+    acts[1:end] = ACTION_SET[1:end]
 end
 
 create_interpolants(::BabyPOMDP) = Interpolants()
