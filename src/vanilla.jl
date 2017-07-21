@@ -4,20 +4,20 @@
 
 #=
 POMDP Model Requirements:
-    create_transition_distribution(pomdp) 
-    states(pomdp) 
-    actions(pomdp) 
-    iterator(space) 
-    transition(pomdp, s, a, dist) 
-    reward(pomdp, s, a, sp) 
-    pdf(dist, sp) 
+    create_transition_distribution(pomdp)
+    states(pomdp)
+    actions(pomdp)
+    iterator(space)
+    transition(pomdp, s, a, dist)
+    reward(pomdp, s, a, sp)
+    pdf(dist, sp)
     discount(pomdp)
-    state_index(pomdp, sp) 
+    state_index(pomdp, sp)
 
     The user must implement the above functions to use QMDP.
 =#
 
-type QMDPSolver <: Solver
+mutable struct QMDPSolver <: Solver
     max_iterations::Int64
     tolerance::Float64
 end
@@ -25,7 +25,7 @@ function QMDPSolver(;max_iterations::Int64=100, tolerance::Float64=1e-3)
     return QMDPSolver(max_iterations, tolerance)
 end
 
-type QMDPPolicy{P<:POMDP, A} <: Policy
+mutable struct QMDPPolicy{P<:POMDP, A} <: Policy
     alphas::Matrix{Float64}
     action_map::Vector{A}
     pomdp::P
@@ -36,7 +36,7 @@ function QMDPPolicy(pomdp::POMDP; alphas::Matrix{Float64}=Array(Float64,0,0))
     ns = n_states(pomdp)
     na = n_actions(pomdp)
     if !isempty(alphas)
-        @assert size(alphas) == (ns,na) "Input alphas dimension mismatch"    
+        @assert size(alphas) == (ns,na) "Input alphas dimension mismatch"
     else
         alphas = zeros(ns, na)
     end

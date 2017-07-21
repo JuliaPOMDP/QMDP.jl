@@ -26,7 +26,7 @@ import POMDPs.n_actions
 
 import POMDPToolbox: interpolants!
 
-type MyPOMDP <: POMDP
+mutable struct MyPOMDP <: POMDP
     r_sa::Float64
     r_sb::Float64
     r_aa::Float64
@@ -35,18 +35,18 @@ type MyPOMDP <: POMDP
     prob_random_death::Float64
 end
 
-type MyState
+mutable struct MyState
     a::Float64
     b::Int
     isdead::Bool
 end
 
-type MyAction
+mutable struct MyAction
     a::Float64
     b::Int
 end
 
-type MyDistribution <: AbstractDistribution
+mutable struct MyDistribution <: AbstractDistribution
     isdead::Bernoulli
     realpart::Normal
     discpart::Categorical
@@ -95,7 +95,7 @@ end
 # Definitions for Solver
 ####################################
 
-type DiscretizationParams
+mutable struct DiscretizationParams
     real::Vector{Float64}
     disc::Vector{Int}
 end
@@ -150,7 +150,7 @@ end
 function interpolants!(interpolants::Interpolants, d::MyDistribution;
     params::DiscretizationParams=my_disc_params
     )
-    
+
      # we can be dead
      # we can have 3 different discrete components
      # with a full set of continuous components
