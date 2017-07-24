@@ -32,7 +32,7 @@ mutable struct QMDPPolicy{P<:POMDP, A} <: Policy
 end
 
 # constructor with an option to pass in generated alpha vectors
-function QMDPPolicy(pomdp::POMDP; alphas::Matrix{Float64}=Array(Float64,0,0))
+function QMDPPolicy(pomdp::POMDP; alphas::Matrix{Float64}=Array{Float64}(0,0))
     ns = n_states(pomdp)
     na = n_actions(pomdp)
     if !isempty(alphas)
@@ -93,7 +93,7 @@ function action(policy::QMDPPolicy, b)
 end
 
 function belief_vector(policy::QMDPPolicy, b)
-    bv = Array(Float64, n_states(policy.pomdp))
+    bv = Array{Float64}(n_states(policy.pomdp))
     for (i,s) in enumerate(ordered_states(policy.pomdp))
         bv[i] = pdf(b, s)
     end
