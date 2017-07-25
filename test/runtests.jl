@@ -27,4 +27,4 @@ bp = update(bu, b, a, o)
 
 r = test_solver(solver, pomdp)
 
-@test r ≈ 17.711 atol=1e-2
+@test isapprox(r, 17.711, atol=1e-2)
