@@ -160,7 +160,7 @@ function interpolants!(interpolants::Interpolants, d::MyDistribution;
     if isapprox(d.isdead.p, 1.0)
         push!(interpolants, get_ndiscrete_states(params), 1.0) # [(STATE_DEAD,1.0)]
     else
-        weights_real = Array(Float64, length(params.real))
+        weights_real = Array{Float64}(length(params.real))
         weights_disc = d.discpart.p
 
         weights_real[1] = cdf(d.realpart, (params.real[2]+params.real[1])/2)
