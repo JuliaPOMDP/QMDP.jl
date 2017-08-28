@@ -88,6 +88,11 @@ function value(policy::QMDPPolicy, b)
     return action(policy, DiscreteBelief(belief_vector(policy, b)))
 end
 
+function state_value(policy::QMDPPolicy, s)
+    si = state_index(policy.pomdp, s)
+    return maximum(policy.alphas[si, :])
+end
+
 function action(policy::QMDPPolicy, b)
     return action(policy, DiscreteBelief(belief_vector(policy, b)))
 end

@@ -14,6 +14,7 @@ export
     solve,
     action,
     value,
+    state_value,
     update,
     initialize_belief,
     updater,
