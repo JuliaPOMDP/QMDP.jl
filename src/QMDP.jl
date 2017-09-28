@@ -3,6 +3,7 @@ module QMDP
 using POMDPs
 using POMDPToolbox
 using DiscreteValueIteration
+using ParticleFilters
 
 import POMDPs: Solver, Policy
 import POMDPs: solve, action, value, update, initialize_belief, updater

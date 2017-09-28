@@ -2,6 +2,7 @@ using QMDP
 using POMDPs
 using POMDPModels
 using POMDPToolbox
+using ParticleFilters
 using Base.Test
 
 pomdp = TigerPOMDP()
@@ -28,3 +29,5 @@ bp = update(bu, b, a, o)
 r = test_solver(solver, pomdp)
 
 @test isapprox(r, 17.711, atol=1e-2)
+
+r = test_solver(solver, pomdp, updater=SIRParticleFilter(pomdp, 1000))

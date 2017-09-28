@@ -85,7 +85,7 @@ function value(policy::QMDPPolicy, b::DiscreteBelief)
 end
 
 function value(policy::QMDPPolicy, b)
-    return action(policy, DiscreteBelief(belief_vector(policy, b)))
+    return value(policy, DiscreteBelief(belief_vector(policy, b)))
 end
 
 function state_value(policy::QMDPPolicy, s)
@@ -104,3 +104,21 @@ function belief_vector(policy::QMDPPolicy, b)
     end
     return bv
 end
+
+function unnormalized_util(policy::QMDPPolicy, b::AbstractParticleBelief)
+    util = zeros(size(policy.alphas, 1))
+    for i in 1:n_particles(b)
+        s = particles(b)[i]
+        j = state_index(policy.pomdp, s)
+        util += weight(b, i)*policy.alphas[:, j]
+    end
+    return util
+end
+
+function action(policy::QMDPPolicy, b::AbstractParticleBelief)
+    util = unnormalized_util(policy, b)
+    ihi = indmax(util)
+    return policy.action_map[ihi]
+end
+
+value(policy::QMDPPolicy, b::AbstractParticleBelief) = maximum(unnormalized_util(policy, b))
