@@ -106,11 +106,11 @@ function belief_vector(policy::QMDPPolicy, b)
 end
 
 function unnormalized_util(policy::QMDPPolicy, b::AbstractParticleBelief)
-    util = zeros(size(policy.alphas, 1))
+    util = zeros(n_actions(policy.pomdp))
     for i in 1:n_particles(b)
         s = particles(b)[i]
         j = state_index(policy.pomdp, s)
-        util += weight(b, i)*policy.alphas[:, j]
+        util += weight(b, i)*vec(policy.alphas[j,:])
     end
     return util
 end
@@ -121,4 +121,4 @@ function action(policy::QMDPPolicy, b::AbstractParticleBelief)
     return policy.action_map[ihi]
 end
 
-value(policy::QMDPPolicy, b::AbstractParticleBelief) = maximum(unnormalized_util(policy, b))
+value(policy::QMDPPolicy, b::AbstractParticleBelief) = maximum(unnormalized_util(policy, b))/weight_sum(b)
