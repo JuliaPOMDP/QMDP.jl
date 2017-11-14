@@ -107,8 +107,7 @@ end
 
 function unnormalized_util(policy::QMDPPolicy, b::AbstractParticleBelief)
     util = zeros(n_actions(policy.pomdp))
-    for i in 1:n_particles(b)
-        s = particles(b)[i]
+    for (i, s) in enumerate(particles(b))
         j = state_index(policy.pomdp, s)
         util += weight(b, i)*vec(policy.alphas[j,:])
     end
