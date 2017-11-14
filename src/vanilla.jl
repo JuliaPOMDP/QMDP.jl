@@ -85,6 +85,9 @@ function value(policy::QMDPPolicy, b::DiscreteBelief)
 end
 
 function value(policy::QMDPPolicy, b)
+    if isa(b, state_type(policy.pomdp))
+        return state_value(policy, b)
+    end
     return value(policy, DiscreteBelief(belief_vector(policy, b)))
 end
 
