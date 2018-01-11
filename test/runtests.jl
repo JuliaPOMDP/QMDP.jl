@@ -15,8 +15,7 @@ rng = MersenneTwister(11)
 
 bu = updater(policy)
 sd = initial_state_distribution(pomdp)
-b = create_belief(bu)
-b = initialize_belief(bu, sd, b)
+b = initialize_belief(bu, sd)
 
 a = action(policy, b)
 v = value(policy, b)
