@@ -3,24 +3,14 @@ module QMDP
 using POMDPs
 using POMDPToolbox
 using DiscreteValueIteration
-using ParticleFilters
 
-import POMDPs: Solver, Policy
-import POMDPs: solve, action, value, update, initialize_belief, updater
+import POMDPs: Solver
+import POMDPs: solve
 
 export
     QMDPSolver,
-    QMDPPolicy,
-    QMDPUpdater,
     solve,
-    action,
-    value,
-    state_value,
-    update,
-    initialize_belief,
-    updater,
-    create_policy,
-    create_belief
+    create_policy
 
 include("vanilla.jl")
 
