@@ -25,8 +25,6 @@ function QMDPSolver(;max_iterations::Int64=100, tolerance::Float64=1e-3)
     return QMDPSolver(max_iterations, tolerance)
 end
 
-create_policy(solver::QMDPSolver, pomdp::POMDP) = AlphaVectorPolicy(pomdp, zeros(n_states(pomdp), n_actions(pomdp)))
-
 @POMDP_require solve(solver::QMDPSolver, pomdp::POMDP) begin
     vi_solver = ValueIterationSolver(solver.max_iterations, solver.tolerance)
     @subreq solve(vi_solver, pomdp)
