@@ -9,8 +9,7 @@ import POMDPs: solve
 
 export
     QMDPSolver,
-    solve,
-    create_policy
+    solve
 
 include("vanilla.jl")
 
