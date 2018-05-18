@@ -1,4 +1,3 @@
 julia 0.6
 POMDPs 0.4
-POMDPToolbox
-ParticleFilters
+POMDPToolbox 0.2.6
