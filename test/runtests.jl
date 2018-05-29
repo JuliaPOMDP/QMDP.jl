@@ -29,4 +29,6 @@ r = test_solver(solver, pomdp)
 
 @test isapprox(r, 17.711, atol=1e-2)
 
-r = test_solver(solver, pomdp, updater=SIRParticleFilter(pomdp, 1000))
+r = test_solver(solver, pomdp, updater=SIRParticleFilter(pomdp, 1000)) 
+
+@test isapprox(r, 17.711, atol=1e-2)

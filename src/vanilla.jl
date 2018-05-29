@@ -25,102 +25,15 @@ function QMDPSolver(;max_iterations::Int64=100, tolerance::Float64=1e-3)
     return QMDPSolver(max_iterations, tolerance)
 end
 
-mutable struct QMDPPolicy{P<:POMDP, A} <: Policy
-    alphas::Matrix{Float64}
-    action_map::Vector{A}
-    pomdp::P
-end
-
-# constructor with an option to pass in generated alpha vectors
-function QMDPPolicy(pomdp::POMDP; alphas::Matrix{Float64}=Array{Float64}(0,0))
-    ns = n_states(pomdp)
-    na = n_actions(pomdp)
-    if !isempty(alphas)
-        @assert size(alphas) == (ns,na) "Input alphas dimension mismatch"
-    else
-        alphas = zeros(ns, na)
-    end
-    action_map = ordered_actions(pomdp)
-    return QMDPPolicy(alphas, action_map, pomdp)
-end
-
-create_policy(solver::QMDPSolver, pomdp::POMDP) = QMDPPolicy(pomdp)
-
-updater(p::QMDPPolicy) = DiscreteUpdater(p.pomdp)
-
 @POMDP_require solve(solver::QMDPSolver, pomdp::POMDP) begin
     vi_solver = ValueIterationSolver(solver.max_iterations, solver.tolerance)
     @subreq solve(vi_solver, pomdp)
 end
 
-function solve(solver::QMDPSolver, pomdp::POMDP, policy::QMDPPolicy=create_policy(solver, pomdp); verbose::Bool=false)
+function solve(solver::QMDPSolver, pomdp::POMDP; verbose::Bool=false)
     vi_solver = ValueIterationSolver(solver.max_iterations, solver.tolerance)
     vi_policy = ValueIterationPolicy(pomdp, include_Q=true)
     vi_policy = solve(vi_solver, pomdp, vi_policy, verbose=verbose)
 
-    policy.alphas[:] = vi_policy.qmat
-    return policy
+    return AlphaVectorPolicy(pomdp, vi_policy.qmat)
 end
-
-alphas(policy::QMDPPolicy) = policy.alphas
-
-function action(policy::QMDPPolicy, b::DiscreteBelief)
-    alphas = policy.alphas
-    (ns, na) = size(alphas)
-    @assert length(b.b) == ns "Length of belief and alpha-vector size mismatch"
-
-    util = alphas'*b.b
-    ihi = indmax(util)
-    return policy.action_map[ihi]
-end
-
-
-function value(policy::QMDPPolicy, b::DiscreteBelief)
-    alphas = policy.alphas
-    (ns, na) = size(alphas)
-    @assert length(b.b) == ns "Length of belief and alpha-vector size mismatch"
-
-    util = alphas'*b.b
-    return maximum(util)
-end
-
-function value(policy::QMDPPolicy, b)
-    if isa(b, state_type(policy.pomdp))
-        return state_value(policy, b)
-    end
-    return value(policy, DiscreteBelief(belief_vector(policy, b)))
-end
-
-function state_value(policy::QMDPPolicy, s)
-    si = state_index(policy.pomdp, s)
-    return maximum(policy.alphas[si, :])
-end
-
-function action(policy::QMDPPolicy, b)
-    return action(policy, DiscreteBelief(belief_vector(policy, b)))
-end
-
-function belief_vector(policy::QMDPPolicy, b)
-    bv = Array{Float64}(n_states(policy.pomdp))
-    for (i,s) in enumerate(ordered_states(policy.pomdp))
-        bv[i] = pdf(b, s)
-    end
-    return bv
-end
-
-function unnormalized_util(policy::QMDPPolicy, b::AbstractParticleBelief)
-    util = zeros(n_actions(policy.pomdp))
-    for (i, s) in enumerate(particles(b))
-        j = state_index(policy.pomdp, s)
-        util += weight(b, i)*vec(policy.alphas[j,:])
-    end
-    return util
-end
-
-function action(policy::QMDPPolicy, b::AbstractParticleBelief)
-    util = unnormalized_util(policy, b)
-    ihi = indmax(util)
-    return policy.action_map[ihi]
-end
-
-value(policy::QMDPPolicy, b::AbstractParticleBelief) = maximum(unnormalized_util(policy, b))/weight_sum(b)
