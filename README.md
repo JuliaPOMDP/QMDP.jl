@@ -3,7 +3,9 @@
 [![Build Status](https://travis-ci.org/JuliaPOMDP/QMDP.jl.svg?branch=master)](https://travis-ci.org/JuliaPOMDP/QMDP.jl)
 [![Coverage Status](https://coveralls.io/repos/JuliaPOMDP/QMDP.jl/badge.svg)](https://coveralls.io/r/JuliaPOMDP/QMDP.jl)
 
-This Julia package implements the QMDP approximate solver for POMDP/MDP planning.
+This Julia package implements the QMDP approximate solver for POMDP/MDP planning. The QMDP solver is documented in: 
+
+* Michael Littman, Anthony Cassandra, and Leslie Kaelbling. "[Learning policies for partially observable environments: Scaling up](http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.52.6374)." In Proceedings of the Twelfth International Conference on Machine Learning, pages 362--370, San Francisco, CA, 1995. 
 
 ## Installation
 
