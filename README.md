@@ -5,7 +5,7 @@
 
 This Julia package implements the QMDP approximate solver for POMDP/MDP planning. The QMDP solver is documented in: 
 
-* Michael Littman, Anthony Cassandra, and Leslie Kaelbling. [Learning policies for partially observable environments: Scaling up. In Armand Prieditis and Stuart Russell](http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.52.6374), editors, Proceedings of the Twelfth International Conference on Machine Learning, pages 362--370, San Francisco, CA, 1995. Morgan Kaufmann. 
+* Michael Littman, Anthony Cassandra, and Leslie Kaelbling. "[Learning policies for partially observable environments: Scaling up](http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.52.6374)." In Proceedings of the Twelfth International Conference on Machine Learning, pages 362--370, San Francisco, CA, 1995. 
 
 ## Installation
 
