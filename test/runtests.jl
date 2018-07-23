@@ -10,7 +10,10 @@ solver = QMDPSolver()
 
 @requirements_info solver pomdp
 
-policy = solve(solver, pomdp, verbose=true)
+solver.verbose = true
+policy = solve(solver, pomdp)
+
+solver.verbose = false
 rng = MersenneTwister(11)
 
 bu = updater(policy)
