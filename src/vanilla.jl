@@ -20,20 +20,24 @@ POMDP Model Requirements:
 mutable struct QMDPSolver <: Solver
     max_iterations::Int64
     tolerance::Float64
+    verbose::Bool
 end
-function QMDPSolver(;max_iterations::Int64=100, tolerance::Float64=1e-3)
-    return QMDPSolver(max_iterations, tolerance)
+function QMDPSolver(;max_iterations::Int64=100, tolerance::Float64=1e-3, verbose=false)
+    return QMDPSolver(max_iterations, tolerance, verbose)
 end
 
 @POMDP_require solve(solver::QMDPSolver, pomdp::POMDP) begin
-    vi_solver = ValueIterationSolver(solver.max_iterations, solver.tolerance)
+    vi_solver = ValueIterationSolver(max_iterations=solver.max_iterations, belres=solver.tolerance)
     @subreq solve(vi_solver, pomdp)
 end
 
-function solve(solver::QMDPSolver, pomdp::POMDP; verbose::Bool=false)
-    vi_solver = ValueIterationSolver(solver.max_iterations, solver.tolerance)
-    vi_policy = ValueIterationPolicy(pomdp, include_Q=true)
-    vi_policy = solve(vi_solver, pomdp, vi_policy, verbose=verbose)
+function solve(solver::QMDPSolver, pomdp::POMDP; kwargs...)
+    # deprecation warning - can be removed when Julia 1.0 is adopted
+    if !isempty(kwargs)
+        warn("Keyword args for solve(::QMDPSolver, ::POMDP) are no longer supported. For verbose output, use the verbose option in the ValueIterationSolver")
+    end
+    vi_solver = ValueIterationSolver(max_iterations=solver.max_iterations, belres=solver.tolerance, verbose=solver.verbose, include_Q=true)
+    vi_policy = solve(vi_solver, pomdp)
 
     return AlphaVectorPolicy(pomdp, vi_policy.qmat)
 end

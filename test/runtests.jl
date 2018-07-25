@@ -10,7 +10,10 @@ solver = QMDPSolver()
 
 @requirements_info solver pomdp
 
-policy = solve(solver, pomdp, verbose=true)
+solver.verbose = true
+policy = solve(solver, pomdp)
+
+solver.verbose = false
 rng = MersenneTwister(11)
 
 bu = updater(policy)
@@ -32,3 +35,6 @@ r = test_solver(solver, pomdp)
 r = test_solver(solver, pomdp, updater=SIRParticleFilter(pomdp, 1000)) 
 
 @test isapprox(r, 17.711, atol=1e-2)
+
+println("There should be a warning here: ")
+solve(solver, pomdp, verbose=true)
