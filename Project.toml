@@ -1,0 +1,11 @@
+name = "QMDP"
+uuid = "3aa3ecc9-5a5d-57c8-8188-3e47bd8068d2"
+repo = "https://github.com/JuliaPOMDP/QMDP.jl"
+
+[deps]
+POMDPs = "a93abf59-7444-517b-a68a-c42f96afdd7d"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+[targets]
+test = ["Test"]
