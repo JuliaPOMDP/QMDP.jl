@@ -1,7 +1,6 @@
 using QMDP
 using POMDPs
 using POMDPModels
-using POMDPToolbox
 using ParticleFilters
 using Base.Test
 

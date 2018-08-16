@@ -1,7 +1,7 @@
 module QMDP
 
 using POMDPs
-using POMDPToolbox
+using POMDPPolicies
 using DiscreteValueIteration
 
 import POMDPs: Solver
