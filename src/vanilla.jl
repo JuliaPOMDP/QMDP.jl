@@ -34,7 +34,7 @@ end
 function solve(solver::QMDPSolver, pomdp::POMDP; kwargs...)
     # deprecation warning - can be removed when Julia 1.0 is adopted
     if !isempty(kwargs)
-        warn("Keyword args for solve(::QMDPSolver, ::POMDP) are no longer supported. For verbose output, use the verbose option in the ValueIterationSolver")
+        @warn("Keyword args for solve(::QMDPSolver, ::POMDP) are no longer supported. For verbose output, use the verbose option in the ValueIterationSolver")
     end
     vi_solver = ValueIterationSolver(max_iterations=solver.max_iterations, belres=solver.tolerance, verbose=solver.verbose, include_Q=true)
     vi_policy = solve(vi_solver, pomdp)

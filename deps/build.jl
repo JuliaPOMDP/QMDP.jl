@@ -1,3 +1,3 @@
 using POMDPs
 
-POMDPs.add("DiscreteValueIteration", false)
+# POMDPs.add("DiscreteValueIteration", false)

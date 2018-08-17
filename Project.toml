@@ -1,0 +1,17 @@
+name = "QMDP"
+uuid = "3aa3ecc9-5a5d-57c8-8188-3e47bd8068d2"
+repo = "https://github.com/JuliaPOMDP/QMDP.jl"
+
+[deps]
+POMDPs = "a93abf59-7444-517b-a68a-c42f96afdd7d"
+DiscreteValueIteration = "4b033969-44f6-5439-a48b-c11fa3648068"
+POMDPPolicies = "fd2a78ec-a0b2-11e8-254f-71ff51514d6b"
+
+[extras]
+ParticleFilters = "c8b314e2-9260-5cf8-ae76-3be7461ca6d0"
+POMDPModels = "355abbd5-f08e-5560-ac9e-8b5f2592a0ca"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+BeliefUpdaters = "449812bc-a0b5-11e8-3863-0db9323dc191"
+
+[targets]
+test = ["ParticleFilters", "POMDPModels", "Test"]
