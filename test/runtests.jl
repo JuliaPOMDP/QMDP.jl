@@ -3,6 +3,7 @@ using POMDPs
 using POMDPModels
 using POMDPModelTools
 using BeliefUpdaters
+using POMDPTesting
 using Test
 using Random
 
@@ -29,11 +30,8 @@ sp, o = generate_so(pomdp, s, a, rng)
 bp = update(bu, b, a, o)
 @test isa(bp, DiscreteBelief)
 
-policy = solve(solver, pomdp)
-# TODO simulate
-# r = ...
-
-# @test isapprox(r, 17.711, atol=1e-2)
+r = test_solver(solver, pomdp)
+@test isapprox(r, 17.711, atol=1e-2)
 
 println("There should be a warning here: ")
 solve(solver, pomdp, verbose=true)
