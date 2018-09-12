@@ -1,7 +1,7 @@
 name = "QMDP"
 uuid = "3aa3ecc9-5a5d-57c8-8188-3e47bd8068d2"
 repo = "https://github.com/JuliaPOMDP/QMDP.jl"
-version = "0.0.0"
+version = "0.1.0"
 
 [deps]
 DiscreteValueIteration = "4b033969-44f6-5439-a48b-c11fa3648068"
