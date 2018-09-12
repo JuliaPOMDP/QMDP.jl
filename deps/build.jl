@@ -1,3 +1,5 @@
-using POMDPs
+# using POMDPs
 
-POMDPs.add("DiscreteValueIteration", false)
+# import Pkg
+# Pkg.add(Pkg.PackageSpec(url="https://github.com/JuliaPOMDP/DiscreteValueIteration.jl"))
+# POMDPs.add("DiscreteValueIteration", false)
