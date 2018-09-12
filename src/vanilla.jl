@@ -12,7 +12,7 @@ POMDP Model Requirements:
     reward(pomdp, s, a, sp)
     pdf(dist, sp)
     discount(pomdp)
-    state_index(pomdp, sp)
+    stateindex(pomdp, sp)
 
     The user must implement the above functions to use QMDP.
 =#
