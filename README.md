@@ -10,7 +10,9 @@ This Julia package implements the QMDP approximate solver for POMDP/MDP planning
 ## Installation
 
 ```julia
-Pkg.clone("https://github.com/sisl/QMDP.jl")
+using POMDPs, Pkg
+POMDPs.add_registry()
+Pkg.add("QMDP")
 ```
 
 ## Usage
@@ -21,21 +23,19 @@ pomdp = MyPOMDP() # initialize POMDP
 
 # initialize the solver
 # key-word args are the maximum number of iterations the solver will run for, and the Bellman tolerance
-solver = QMDPSolver(max_iterations=20, tolerance=1e-3) 
-
-# initialize the QMDP policy
-policy = create_policy(solver, pomdp)
+solver = QMDPSolver(max_iterations=20,
+                    tolerance=1e-3,
+                    verbose=true
+                   ) 
 
 # run the solver
-solve(solver, pomdp, policy, verbose=true)
+policy = solve(solver, pomdp)
 ```
 
-To compute optimal action define a Belief with accessor functions, or use the DiscreteBelief provided in [POMDPToolbox](https://github.com/sisl/POMDPToolbox.jl).
+To compute optimal action, define a belief with the [distribution interface](http://juliapomdp.github.io/POMDPs.jl/latest/interfaces.html#Distributions-1), or use the DiscreteBelief provided in [BeliefUpdaters](https://github.com/JuliaPOMDP/BeliefUpdaters.jl).
 
 ```julia
-using POMDPToolbox
-ns = n_states(pomdp)
-b = DiscreteBelief(ns) # initialize to a uniform belief
+using BeliefUpdaters
+b = uniform_belief(pomdp) # initialize to a uniform belief
 a = action(policy, b)
 ```
-
