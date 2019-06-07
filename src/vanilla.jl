@@ -39,5 +39,5 @@ function solve(solver::QMDPSolver, pomdp::POMDP; kwargs...)
     vi_solver = ValueIterationSolver(max_iterations=solver.max_iterations, belres=solver.tolerance, verbose=solver.verbose, include_Q=true)
     vi_policy = solve(vi_solver, pomdp)
 
-    return AlphaVectorPolicy(pomdp, vi_policy.qmat)
+    return AlphaVectorPolicy(pomdp, vi_policy.qmat, vi_policy.action_map)
 end
