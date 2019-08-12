@@ -2,42 +2,35 @@
 ###################### QMDP Solver #########################
 ############################################################
 
-#=
-POMDP Model Requirements:
-    create_transition_distribution(pomdp)
-    states(pomdp)
-    actions(pomdp)
-    iterator(space)
-    transition(pomdp, s, a, dist)
-    reward(pomdp, s, a, sp)
-    pdf(dist, sp)
-    discount(pomdp)
-    stateindex(pomdp, sp)
+"""
+    QMDPSolver
+A POMDP Solver using the QMDP approximation. This algorithm assumes full observability after the first step which considers the POMDP as an MDP.
+It only supports discrete states and actions POMDPs.
+The internals of the QMDPSolver relies on DiscreteValueIteration.jl. You can specify the value iteration solver of your choice (sparse or regular) to the QMDPSolver constructor.
+See the DiscreteValueIteration.jl documentation for more information on the parameters. By default it is using the standard `ValueIterationSolver`.
 
-    The user must implement the above functions to use QMDP.
-=#
+# Constructors
+- `QMDPSolver(;max_iterations::Int64=100, belres::Float64=1e-3, verbose=false)` Method that uses `ValueIterationSolver` by default
+- `QMDPSovler(s::Union{ValueIterationSolver, SparseValueIterationSolver})` Method that require passing a solver (e.g. `SparseValueIterationSolver`)
 
-mutable struct QMDPSolver <: Solver
-    max_iterations::Int64
-    tolerance::Float64
-    verbose::Bool
+# Fields
+- `solver::S` a `ValueIterationSolver` or `SparseValueIterationSolver`
+
+"""
+mutable struct QMDPSolver{S <: Union{ValueIterationSolver, SparseValueIterationSolver}} <: Solver
+    solver::S
 end
-function QMDPSolver(;max_iterations::Int64=100, tolerance::Float64=1e-3, verbose=false)
-    return QMDPSolver(max_iterations, tolerance, verbose)
+function QMDPSolver(;max_iterations::Int64=100, belres::Float64=1e-3, verbose=false)
+    solver = ValueIterationSolver(max_iterations=max_iterations, belres=belres, verbose=verbose, include_Q=true)
+    return QMDPSolver(solver)
 end
 
 @POMDP_require solve(solver::QMDPSolver, pomdp::POMDP) begin
-    vi_solver = ValueIterationSolver(max_iterations=solver.max_iterations, belres=solver.tolerance)
-    @subreq solve(vi_solver, pomdp)
+    mdp = UnderlyingMDP(pomdp)
+    @subreq solve(solver.solver, mdp)
 end
 
 function solve(solver::QMDPSolver, pomdp::POMDP; kwargs...)
-    # deprecation warning - can be removed when Julia 1.0 is adopted
-    if !isempty(kwargs)
-        @warn "Keyword args for solve(::QMDPSolver, ::POMDP) are no longer supported. For verbose output, use the verbose option in the ValueIterationSolver"
-    end
-    vi_solver = ValueIterationSolver(max_iterations=solver.max_iterations, belres=solver.tolerance, verbose=solver.verbose, include_Q=true)
-    vi_policy = solve(vi_solver, pomdp)
-
+    vi_policy = solve(solver.solver, UnderlyingMDP(pomdp))
     return AlphaVectorPolicy(pomdp, vi_policy.qmat, vi_policy.action_map)
 end
