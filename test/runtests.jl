@@ -2,36 +2,44 @@ using QMDP
 using POMDPs
 using POMDPModels
 using POMDPModelTools
+using DiscreteValueIteration
 using BeliefUpdaters
 using POMDPTesting
 using Test
 using Random
 
-pomdp = TigerPOMDP()
-solver = QMDPSolver()
 
-@requirements_info solver pomdp
+@testset "Standard QMDP" begin
+    pomdp = TigerPOMDP()
+    solver = QMDPSolver(verbose=true)
 
-solver.verbose = true
-policy = solve(solver, pomdp)
+    @requirements_info solver pomdp
 
-solver.verbose = false
-rng = MersenneTwister(11)
+    policy = solve(solver, pomdp)
 
-bu = updater(policy)
-sd = initialstate_distribution(pomdp)
-b = initialize_belief(bu, sd)
+    solver = QMDPSolver(verbose=false)
+    rng = MersenneTwister(11)
 
-a = action(policy, b)
-v = value(policy, b)
+    bu = updater(policy)
+    sd = initialstate_distribution(pomdp)
+    b = initialize_belief(bu, sd)
 
-s = initialstate(pomdp, rng)
-sp, o = generate_so(pomdp, s, a, rng)
-bp = update(bu, b, a, o)
-@test isa(bp, DiscreteBelief)
+    a = action(policy, b)
+    v = value(policy, b)
 
-r = test_solver(solver, pomdp)
-@test isapprox(r, 17.711, atol=1e-2)
+    s = initialstate(pomdp, rng)
+    sp, o = generate_so(pomdp, s, a, rng)
+    bp = update(bu, b, a, o)
+    @test isa(bp, DiscreteBelief)
 
-println("There should be a warning here: ")
-solve(solver, pomdp, verbose=true)
+    r = test_solver(solver, pomdp)
+    @test isapprox(r, 17.711, atol=1e-2)
+end
+
+@testset "Sparse QMDP" begin
+    pomdp = TigerPOMDP()
+    solver = QMDPSolver(SparseValueIterationSolver())
+
+    r = test_solver(solver, pomdp)
+    @test isapprox(r, 17.711, atol=1e-2)
+end

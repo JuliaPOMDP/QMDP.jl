@@ -1,6 +1,7 @@
 module QMDP
 
 using POMDPs
+using POMDPModelTools
 using POMDPPolicies
 using DiscreteValueIteration
 
