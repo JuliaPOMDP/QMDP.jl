@@ -30,7 +30,7 @@ end
     @subreq solve(solver.solver, mdp)
 end
 
-function solve(solver::QMDPSolver, pomdp::POMDP; kwargs...)
+function solve(solver::QMDPSolver, pomdp::POMDP)
     vi_policy = solve(solver.solver, UnderlyingMDP(pomdp))
     return AlphaVectorPolicy(pomdp, vi_policy.qmat, vi_policy.action_map)
 end

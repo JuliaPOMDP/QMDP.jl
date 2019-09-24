@@ -28,7 +28,7 @@ using Random
     v = value(policy, b)
 
     s = initialstate(pomdp, rng)
-    sp, o = generate_so(pomdp, s, a, rng)
+    sp, o = gen(DDNOut(:sp, :o), pomdp, s, a, rng)
     bp = update(bu, b, a, o)
     @test isa(bp, DiscreteBelief)
 
