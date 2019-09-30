@@ -43,7 +43,7 @@ a = action(policy, b)
 In order to use the efficient `SparseValueIterationSolver` from [DiscreteValueIteration.jl](https://github.com/JuliaPOMDP/DiscreteValueIteration.jl), you can directly pass the solver to the `QMDPSolver` constructor as follows:
 
 ```julia
-using QMDP, DiscreteValueIterationSolver
+using QMDP, DiscreteValueIteration
 pomdp = MyPOMDP()
 
 solver = QMDPSolver(SparseValueIterationSolver(max_iterations=20, verbose=true))
