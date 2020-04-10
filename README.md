@@ -24,7 +24,7 @@ pomdp = MyPOMDP() # initialize POMDP
 # initialize the solver
 # key-word args are the maximum number of iterations the solver will run for, and the Bellman tolerance
 solver = QMDPSolver(max_iterations=20,
-                    tolerance=1e-3,
+                    belres=1e-3,
                     verbose=true
                    ) 
 
