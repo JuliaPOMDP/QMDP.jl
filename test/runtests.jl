@@ -5,6 +5,7 @@ using POMDPModelTools
 using DiscreteValueIteration
 using BeliefUpdaters
 using POMDPTesting
+using POMDPLinter: show_requirements, get_requirements
 using Test
 using Random
 
@@ -13,7 +14,8 @@ using Random
     pomdp = TigerPOMDP()
     solver = QMDPSolver(verbose=true)
 
-    @requirements_info solver pomdp
+    @test_skip @requirements_info solver pomdp
+    show_requirements(get_requirements(POMDPs.solve, (solver, pomdp)))
 
     policy = solve(solver, pomdp)
 
@@ -21,14 +23,14 @@ using Random
     rng = MersenneTwister(11)
 
     bu = updater(policy)
-    sd = initialstate_distribution(pomdp)
+    sd = initialstate(pomdp)
     b = initialize_belief(bu, sd)
 
     a = action(policy, b)
     v = value(policy, b)
 
-    s = initialstate(pomdp, rng)
-    sp, o = gen(DDNOut(:sp, :o), pomdp, s, a, rng)
+    s = rand(rng, initialstate(pomdp))
+    sp, o = @gen(:sp, :o)(pomdp, s, a, rng)
     bp = update(bu, b, a, o)
     @test isa(bp, DiscreteBelief)
 
