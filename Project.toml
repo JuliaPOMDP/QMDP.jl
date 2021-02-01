@@ -12,15 +12,15 @@ POMDPs = "a93abf59-7444-517b-a68a-c42f96afdd7d"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [compat]
-julia = "1"
-POMDPModelTools = "0.1, 0.2, 0.3"
-POMDPPolicies = "0.1.4, 0.2, 0.3"
-POMDPLinter = "0.1"
-DiscreteValueIteration = "0.4"
-POMDPs = "0.9.0"
 BeliefUpdaters = "0.2"
+DiscreteValueIteration = "0.4"
+POMDPLinter = "0.1"
+POMDPModelTools = "0.1, 0.2, 0.3"
 POMDPModels = "0.4"
+POMDPPolicies = "0.1.4, 0.2, 0.3, 0.4"
 POMDPTesting = "0.2"
+POMDPs = "0.9.0"
+julia = "1"
 
 [extras]
 BeliefUpdaters = "8bb6e9a1-7d73-552c-a44a-e5dc5634aac4"
