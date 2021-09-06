@@ -10,8 +10,7 @@ This Julia package implements the QMDP approximate solver for POMDP/MDP planning
 ## Installation
 
 ```julia
-using POMDPs, Pkg
-POMDPs.add_registry()
+import Pkg
 Pkg.add("QMDP")
 ```
 
