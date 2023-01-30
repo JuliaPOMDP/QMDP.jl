@@ -1,8 +1,7 @@
 module QMDP
 
 using POMDPs
-using POMDPModelTools
-using POMDPPolicies
+using POMDPTools
 using DiscreteValueIteration
 using POMDPLinter: @POMDP_require, @subreq
 

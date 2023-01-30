@@ -1,10 +1,8 @@
 using QMDP
 using POMDPs
 using POMDPModels
-using POMDPModelTools
+using POMDPTools
 using DiscreteValueIteration
-using BeliefUpdaters
-using POMDPTesting
 using POMDPLinter: show_requirements, get_requirements
 using Test
 using Random

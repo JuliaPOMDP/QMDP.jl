@@ -31,10 +31,10 @@ solver = QMDPSolver(max_iterations=20,
 policy = solve(solver, pomdp)
 ```
 
-To compute optimal action, define a belief with the [distribution interface](http://juliapomdp.github.io/POMDPs.jl/latest/interfaces.html#Distributions-1), or use the DiscreteBelief provided in [BeliefUpdaters](https://github.com/JuliaPOMDP/BeliefUpdaters.jl).
+To compute optimal action, define a belief with the [distribution interface](http://juliapomdp.github.io/POMDPs.jl/latest/interfaces.html#Distributions-1), or use the DiscreteBelief provided in [POMDPTools](http://juliapomdp.github.io/POMDPs.jl/latest/POMDPTools/beliefs/#Implemented-Belief-Updaters).
 
 ```julia
-using BeliefUpdaters
+using POMDPTools
 b = uniform_belief(pomdp) # initialize to a uniform belief
 a = action(policy, b)
 ```
