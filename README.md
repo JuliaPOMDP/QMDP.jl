@@ -1,7 +1,7 @@
 # QMDP
 
-[![Build Status](https://travis-ci.org/JuliaPOMDP/QMDP.jl.svg?branch=master)](https://travis-ci.org/JuliaPOMDP/QMDP.jl)
-[![Coverage Status](https://coveralls.io/repos/JuliaPOMDP/QMDP.jl/badge.svg)](https://coveralls.io/r/JuliaPOMDP/QMDP.jl)
+[![Build Status](https://github.com/JuliaPOMDP/QMDP.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/JuliaPOMDP/QMDP.jl/actions/workflows/CI.yml/)
+[![codecov](https://codecov.io/gh/JuliaPOMDP/QMDP.jl/branch/master/graph/badge.svg?token=eh6GUxQiQg)](https://codecov.io/gh/JuliaPOMDP/QMDP.jl)
 
 This Julia package implements the QMDP approximate solver for POMDP/MDP planning. The QMDP solver is documented in: 
 
